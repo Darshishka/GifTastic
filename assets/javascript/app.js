@@ -9,14 +9,14 @@ $(document).ready(function () {
         var newAnimal = $("#addInput").val();
         newAnimal = newAnimal.toLowerCase();
         topics.push(newAnimal);
-        $("#buttons").append('<button id="gif' + newAnimal + '">' + newAnimal + '</button>');
-        console.log(topics);
+        $("#buttons").append('<button id="gif' + newAnimal + '" class="animal-button">' + newAnimal + '</button>');
     });
 
-    var onButtonClick = function() {
-    $("button").click(function() {
+    $(document).on("click", ".animal-button", function(){
+        //gets id of button clicked
         var currentGif = this.id;
         if (this.id != "btnAddSubmit") {
+            //remove the word gif from the id to get the animal name
             currentGif = currentGif.replace("gif", "");
             currentGif = currentGif.toLowerCase();
             var topicNum = topics.indexOf(currentGif);
@@ -25,16 +25,18 @@ $(document).ready(function () {
                 method: "GET",
                 url: myUrl,
             }).then(function(response) {
-                console.log(currentGif);
-                console.log(response);
                 $("#gifLocation").empty();
-                var gifURL = response.data[0].images.fixed_width.url;
+                var gifPausedURL = response.data[0].images.fixed_width_still.url;
+                var gifPlayingURL = response.data[0].images.fixed_width.url;
 
-                console.log(response.data.length);
                 var gifNum = response.data.length
                 for (var i = 0; i < gifNum; i++) {
+                    // add attributes to store urls for data-playing and data-paused
+                    
+                    // add attribute data-state, start gifs as playing or paused and set state accordingly
                     $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-                    gifURL = response.data[i].images.fixed_width.url;
+                    gifPausedURL = response.data[i].images.fixed_width_still.url;
+                    gifPlayingURL = response.data[i].images.fixed_width.url;
                     var gifRateId = "gifRate" + i;
                     var ratingLocString = '<p id="' + gifRateId + '"></p>'
                     var ratingLoc = $(ratingLocString);
@@ -44,253 +46,27 @@ $(document).ready(function () {
                     $("#" + gifRateId).text(gifRating);
                     var gifId = "gif" + i;
                     var gifImage = $('<img class=gif id=' + gifId + '>');
-                    gifImage.attr("src", gifURL);
+                    gifImage.attr("src", gifPausedURL);
+                    gifImage.attr("data-state", "paused");
+                    gifImage.attr("data-paused", gifPausedURL);
+                    gifImage.attr("data-playing", gifPlayingURL);
                     $("#gifDiv" + i).append(gifImage);
-                    console.log(currentGif);
                 }
             });
         }
     });
-
-
-// //pre set buttons
-//     $("#gifDog").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[0] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             console.log(response);
-//             $("#gifLocation").empty();
-//             var gifURL = response.data[0].images.fixed_width.url;
-
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifCat").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[1] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             console.log(response);
-//             $("#gifLocation").empty();
-//             var gifURL = response.data[0].images.fixed_width.url;
-
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifPangolin").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[2] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;
-            
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifSnake").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[3] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;
-
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifBird").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[4] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;
-
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifEmu").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[5] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;
-
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifCow").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[6] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;            
-            
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
-
-//     $("#gifHedgehog").click(function() {
-//         var myUrl = "https://api.giphy.com/v1/gifs/search?q=" + topics[7] + "&api_key=oaPF55NglUdAyYKwDZ0KtuSumMrwDAK9&limit=15";
-//         $.ajax({
-//             method: "GET",
-//             url: myUrl,
-//         }).then(function(response) {
-//             $("#gifLocation").empty();
-//             console.log(response);
-//             var gifURL = response.data[0].images.fixed_width.url;            
-            
-//             console.log(response.data.length);
-//             var gifNum = response.data.length
-//             for (var i = 0; i < gifNum; i++) {
-//                 $("#gifLocation").append('<div id=gifDiv' + i + '></div>');
-//                 gifURL = response.data[i].images.fixed_width.url;
-//                 var gifRateId = "gifRate" + i;
-//                 var ratingLocString = '<p id="' + gifRateId + '"></p>'
-//                 var ratingLoc = $(ratingLocString);
-//                 var rating =  response.data[i].rating;
-//                 var gifRating = "Rating: " + rating;
-//                 $("#gifDiv" + i).append(ratingLoc);
-//                 $("#" + gifRateId).text(gifRating);
-//                 var gifId = "gif" + i;
-//                 var gifImage = $('<img class=gif id=' + gifId + '>');
-//                 gifImage.attr("src", gifURL);
-//                 $("#gifDiv" + i).append(gifImage);
-//             }
-//         });
-//     });
+//on user click changes play states
+    $(document).on("click", ".gif", function(){
+        var state = $(this).attr("data-state")
+        if (state === "paused"){
+            $(this).attr("data-state", "playing");
+            var link = $(this).attr("data-playing");
+            $(this).attr("src", link);
+        }
+        else if (state === "playing") {
+            $(this).attr("data-state", "paused");
+            var link = $(this).attr("data-paused");
+            $(this).attr("src", link);
+        }
+    });
 });
